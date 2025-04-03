@@ -31,12 +31,32 @@
 
 	$: if (citation) {
 		mergedDocuments = citation.document?.map((c, i) => {
-			return {
+			let document = {
+				name: "",
+				url: "#",
 				source: citation.source,
 				document: c,
 				metadata: citation.metadata?.[i],
 				distance: citation.distances?.[i]
 			};
+
+			let name = decodeURIComponent(document?.metadata?.name ?? document.source.name);
+			let url = document?.metadata?.file_id
+				? `${WEBUI_API_BASE_URL}/files/${document?.metadata?.file_id}/content${document?.metadata?.page !== undefined ? `#page=${document.metadata.page + 1}` : ''}`
+				: document.source?.url?.includes('http')
+					? document.source.url
+					: `#`;
+
+			let nameParts = name.split('#');
+			if(nameParts.length > 1){
+				name = nameParts[0];
+				url = nameParts[1];
+			}
+
+			document.name = name;
+			document.url = url;
+				
+			return document;
 		});
 		if (mergedDocuments.every((doc) => doc.distance !== undefined)) {
 			mergedDocuments = mergedDocuments.sort(
@@ -89,7 +109,8 @@
 								tippyOptions={{ duration: [500, 0] }}
 							>
 								<div class="text-sm dark:text-gray-400 flex items-center gap-2 w-fit">
-									<a
+									<!-- <p>{JSON.stringify(document)}</p> -->
+									<!-- <a
 										class="hover:text-gray-500 dark:hover:text-gray-100 underline grow"
 										href={document?.metadata?.file_id
 											? `${WEBUI_API_BASE_URL}/files/${document?.metadata?.file_id}/content${document?.metadata?.page !== undefined ? `#page=${document.metadata.page + 1}` : ''}`
@@ -99,6 +120,13 @@
 										target="_blank"
 									>
 										{decodeURIComponent(document?.metadata?.name ?? document.source.name)}
+									</a> -->
+									<a
+										class="hover:text-gray-500 dark:hover:text-gray-100 underline grow"
+										href={document?.url}
+										target="_blank"
+									>
+										{document?.name}
 									</a>
 									{#if document?.metadata?.page}
 										<span class="text-xs text-gray-500 dark:text-gray-400">

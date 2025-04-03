@@ -72,6 +72,10 @@
 					existingSource.metadata.push(metadata);
 					if (distance !== undefined) existingSource.distances.push(distance);
 				} else {
+					let nameParts = _source.name.split('#');
+					if(nameParts.length > 1){
+						_source.name = nameParts[0];
+					}
 					acc.push({
 						id: id,
 						source: _source,
