@@ -49,10 +49,19 @@
 
 			let nameParts = name.split('#');
 			if(nameParts.length > 1){
+				let pdf_check = nameParts[1].split('.pdf');
 				name = nameParts[0];
 				url = nameParts[1];
+				if(pdf_check.length > 1){
+					url = pdf_check[0];
+					console.log("56 url: ###", url);
+				}
+				else{
+					url = nameParts[1];
+					console.log("60 url: ###", url);
+				}
 			}
-
+			console.log("63 url: ###", url);
 			document.name = name;
 			document.url = url;
 				
